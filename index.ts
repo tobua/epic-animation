@@ -29,10 +29,13 @@ function animateFrame(frame: number) {
     // biome-ignore lint/suspicious/noExplicitAny: Temporary workaround.
     animation.element.style[animation.property as any] = `${newValue}px`
     animation.value = currentValue
-  }
-  requestAnimationFrame(animateFrame)
 
-  // TODO stop loop condition if no more animations running.
+    // TODO remove animation if finished.
+  }
+
+  if (animations.size !== 0) {
+    requestAnimationFrame(animateFrame)
+  }
 }
 
 export function animate(element: HTMLElement, animation: Animation) {
