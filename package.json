@@ -1,0 +1,72 @@
+{
+  "name": "epic-animation",
+  "description": "JavaScript based animation helpers.",
+  "version": "0.0.0-development",
+  "repository": "github:tobua/epic-animation",
+  "license": "CC-BY-NC-4.0",
+  "author": "Matthias Giger",
+  "scripts": {
+    "check": "biome check --write .",
+    "types": "tsc && tsc --noEmit --project ./test/tsconfig.json"
+  },
+  "devDependencies": {
+    "@biomejs/biome": "^1.8.3",
+    "@happy-dom/global-registrator": "^14.12.3",
+    "@types/bun": "^1.1.6",
+    "typescript": "^5.5.4",
+    "zero-configuration": "^0.17.2"
+  },
+  "trustedDependencies": [
+    "zero-configuration"
+  ],
+  "type": "module",
+  "sideEffects": false,
+  "main": "./index.ts",
+  "exports": {
+    ".": "./index.ts"
+  },
+  "files": [
+    "*.ts"
+  ],
+  "keywords": [
+    "epic",
+    "animation",
+    "transformation",
+    "keyframe"
+  ],
+  "publishConfig": {
+    "provenance": false
+  },
+  "configuration": {
+    "gitignore": "recommended",
+    "vscode": "biome",
+    "license": "commercial",
+    "biome": {
+      "extends": "recommended",
+      "files": {
+        "ignore": [
+          "demo"
+        ]
+      }
+    },
+    "typescript": [
+      {
+        "extends": "plugin",
+        "compilerOptions": {
+          "jsx": "react-jsx"
+        },
+        "files": [
+          "index.ts"
+        ]
+      },
+      {
+        "extends": "plugin",
+        "folder": "test",
+        "compilerOptions": {
+          "strict": false,
+          "jsx": "react-jsx"
+        }
+      }
+    ]
+  }
+}
