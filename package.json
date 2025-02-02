@@ -35,7 +35,7 @@
     "keyframe"
   ],
   "publishConfig": {
-    "provenance": false
+    "provenance": true
   },
   "configuration": {
     "gitignore": "recommended",

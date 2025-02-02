@@ -1,6 +1,7 @@
+import { reportFps, status } from './performance'
 import { Animation, type AnimationKey } from './types'
 
-export { Animation }
+export { Animation, status }
 
 type RunningAnimation = {
   duration: number | 'infinite'
@@ -34,6 +35,7 @@ function startAnimations() {
 }
 
 function animateFrame(frame: number) {
+  reportFps()
   for (const animation of animations) {
     const currentValue = animation.value
     const newValue = animation.nextValue(frame, currentValue)
@@ -100,6 +102,21 @@ export function animate(element: HTMLElement, animation: AnimationKey) {
       duration: 60,
       value: 1,
       nextValue: (_frame, value) => value - 1 / 60,
+      direction: 0.01,
+      property: 'opacity',
+      size: 'number',
+      element,
+    })
+  }
+
+  if (animation === Animation.blink) {
+    animations.add({
+      duration: 'infinite',
+      value: 1,
+      nextValue: (frame) => {
+        const oscillation = Math.sin(frame * (Math.PI / 500)) // 500ms is half the duration.
+        return (oscillation + 1) / 2
+      },
       direction: 0.01,
       property: 'opacity',
       size: 'number',
