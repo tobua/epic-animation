@@ -3,5 +3,6 @@ import { Animation, animate } from '../index'
 
 test('Methods are available.', () => {
   expect(animate).toBeDefined()
-  expect(Animation.Line).toBe(1)
+  expect(Animation.line).toBe('l')
+  expect(Animation.show).toBe('show')
 })

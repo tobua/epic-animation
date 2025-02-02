@@ -1,14 +1,25 @@
-import { Animation } from './types'
+import { Animation, type AnimationKey } from './types'
 
 export { Animation }
 
 type RunningAnimation = {
   duration: number | 'infinite'
-  nextValue: (value: number) => number
+  nextValue: (frame: number, value: number) => number
   value: number
   direction: number
   property: keyof CSSStyleDeclaration
   element: HTMLElement
+  size: Size
+}
+
+type Size = 'pixel' | 'number'
+
+function formatSize(value: number, size: Size) {
+  if (size === 'number') {
+    return String(value.toFixed(4))
+  }
+
+  return `${value}px`
 }
 
 const animations = new Set<RunningAnimation>()
@@ -25,21 +36,27 @@ function startAnimations() {
 function animateFrame(frame: number) {
   for (const animation of animations) {
     const currentValue = animation.value
-    const newValue = animation.nextValue(frame)
+    const newValue = animation.nextValue(frame, currentValue)
     // biome-ignore lint/suspicious/noExplicitAny: Temporary workaround.
-    animation.element.style[animation.property as any] = `${newValue}px`
-    animation.value = currentValue
+    animation.element.style[animation.property as any] = formatSize(newValue, animation.size)
+    animation.value = newValue
 
-    // TODO remove animation if finished.
+    if (typeof animation.duration === 'number') {
+      animation.duration -= 1
+
+      if (animation.duration < 0) {
+        animations.delete(animation)
+      }
+    }
   }
 
-  if (animations.size !== 0) {
+  if (animations.size > 0) {
     requestAnimationFrame(animateFrame)
   }
 }
 
-export function animate(element: HTMLElement, animation: Animation) {
-  if (animation === Animation.Circle) {
+export function animate(element: HTMLElement, animation: AnimationKey) {
+  if (animation === Animation.circle) {
     animations.add({
       duration: 'infinite',
       value: 0,
@@ -49,6 +66,7 @@ export function animate(element: HTMLElement, animation: Animation) {
       },
       direction: 0.01,
       property: 'top',
+      size: 'pixel',
       element,
     })
     animations.add({
@@ -60,6 +78,31 @@ export function animate(element: HTMLElement, animation: Animation) {
       },
       direction: 0.01,
       property: 'left',
+      size: 'pixel',
+      element,
+    })
+  }
+
+  if (animation === Animation.show) {
+    animations.add({
+      duration: 60,
+      value: 0,
+      nextValue: (_frame, value) => value + 1 / 60,
+      direction: 0.01,
+      property: 'opacity',
+      size: 'number',
+      element,
+    })
+  }
+
+  if (animation === Animation.hide) {
+    animations.add({
+      duration: 60,
+      value: 1,
+      nextValue: (_frame, value) => value - 1 / 60,
+      direction: 0.01,
+      property: 'opacity',
+      size: 'number',
       element,
     })
   }
